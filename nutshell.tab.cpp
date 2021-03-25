@@ -99,11 +99,12 @@ enum yysymbol_kind_t
   YYSYMBOL_WORD = 3,                       /* WORD  */
   YYSYMBOL_STOP = 4,                       /* STOP  */
   YYSYMBOL_EXIT = 5,                       /* EXIT  */
-  YYSYMBOL_YYACCEPT = 6,                   /* $accept  */
-  YYSYMBOL_program = 7,                    /* program  */
-  YYSYMBOL_line = 8,                       /* line  */
-  YYSYMBOL_cmd = 9,                        /* cmd  */
-  YYSYMBOL_args = 10                       /* args  */
+  YYSYMBOL_TILDE = 6,                      /* TILDE  */
+  YYSYMBOL_YYACCEPT = 7,                   /* $accept  */
+  YYSYMBOL_program = 8,                    /* program  */
+  YYSYMBOL_line = 9,                       /* line  */
+  YYSYMBOL_cmd = 10,                       /* cmd  */
+  YYSYMBOL_args = 11                       /* args  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -116,7 +117,7 @@ typedef enum yysymbol_kind_t yysymbol_kind_t;
     	cout << description << endl; 
     }
 
-#line 120 "nutshell.tab.cpp"
+#line 121 "nutshell.tab.cpp"
 
 #ifdef short
 # undef short
@@ -431,21 +432,21 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  8
+#define YYFINAL  9
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   5
+#define YYLAST   8
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  6
+#define YYNTOKENS  7
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  5
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  8
+#define YYNRULES  10
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  11
+#define YYNSTATES  13
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   260
+#define YYMAXUTOK   261
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -485,14 +486,15 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5
+       5,     6
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    27,    27,    28,    30,    32,    33,    35,    36
+       0,    27,    27,    28,    30,    32,    33,    35,    36,    37,
+      38
 };
 #endif
 
@@ -509,7 +511,7 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
 static const char *const yytname[] =
 {
   "\"end of file\"", "error", "\"invalid token\"", "WORD", "STOP", "EXIT",
-  "$accept", "program", "line", "cmd", "args", YY_NULLPTR
+  "TILDE", "$accept", "program", "line", "cmd", "args", YY_NULLPTR
 };
 
 static const char *
@@ -524,7 +526,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    (internal) symbol number NUM (which must be that of a token).  */
 static const yytype_int16 yytoknum[] =
 {
-       0,   256,   257,   258,   259,   260
+       0,   256,   257,   258,   259,   260,   261
 };
 #endif
 
@@ -542,8 +544,8 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -3,    -2,    -4,     3,    -4,     0,    -4,     2,    -4,    -4,
-      -4
+      -1,    -3,    -4,     1,    -4,     2,    -4,     4,     5,    -4,
+      -4,    -4,    -4
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -551,8 +553,8 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     5,     3,     0,     2,     0,     7,     6,     1,     4,
-       8
+       0,     5,     3,     0,     2,     0,     7,     8,     6,     1,
+       4,     9,    10
 };
 
   /* YYPGOTO[NTERM-NUM].  */
@@ -564,7 +566,7 @@ static const yytype_int8 yypgoto[] =
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     3,     4,     5,     7
+       0,     3,     4,     5,     8
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -572,32 +574,34 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-       1,     6,     2,     8,     9,    10
+       6,     9,     1,     7,     2,     0,    10,    11,    12
 };
 
 static const yytype_int8 yycheck[] =
 {
-       3,     3,     5,     0,     4,     3
+       3,     0,     3,     6,     5,    -1,     4,     3,     3
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,     5,     7,     8,     9,     3,    10,     0,     4,
-       3
+       0,     3,     5,     8,     9,    10,     3,     6,    11,     0,
+       4,     3,     3
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,     6,     7,     7,     8,     9,     9,    10,    10
+       0,     7,     8,     8,     9,    10,    10,    11,    11,    11,
+      11
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     1,     2,     1,     2,     1,     2
+       0,     2,     1,     1,     2,     1,     2,     1,     1,     2,
+       2
 };
 
 
@@ -1336,48 +1340,60 @@ yyreduce:
     {
   case 2: /* program: line  */
 #line 27 "nutshell.ypp"
-              { YYACCEPT; }
-#line 1341 "nutshell.tab.cpp"
+                { YYACCEPT; }
+#line 1345 "nutshell.tab.cpp"
     break;
 
   case 3: /* program: EXIT  */
 #line 28 "nutshell.ypp"
-       { cout << "Goodbye!\n"; exit(0); }
-#line 1347 "nutshell.tab.cpp"
+                { cout << "Goodbye!\n"; exit(0); }
+#line 1351 "nutshell.tab.cpp"
     break;
 
   case 4: /* line: cmd STOP  */
 #line 30 "nutshell.ypp"
-               { parseCMD(); }
-#line 1353 "nutshell.tab.cpp"
+                { parseCMD(); }
+#line 1357 "nutshell.tab.cpp"
     break;
 
   case 5: /* cmd: WORD  */
 #line 32 "nutshell.ypp"
-            { string s((yyvsp[0].val)); currCommand.addCommand(s); }
-#line 1359 "nutshell.tab.cpp"
+                { string s((yyvsp[0].val)); currCommand.addCommand(s); }
+#line 1363 "nutshell.tab.cpp"
     break;
 
   case 6: /* cmd: WORD args  */
 #line 33 "nutshell.ypp"
-             { string s((yyvsp[-1].val)); currCommand.addCommand(s); }
-#line 1365 "nutshell.tab.cpp"
+                { string s((yyvsp[-1].val)); currCommand.addCommand(s); }
+#line 1369 "nutshell.tab.cpp"
     break;
 
   case 7: /* args: WORD  */
 #line 35 "nutshell.ypp"
-           { string s((yyvsp[0].val)); currCommand.addArg(s); }
-#line 1371 "nutshell.tab.cpp"
+                { string s((yyvsp[0].val)); currCommand.addArg(s); }
+#line 1375 "nutshell.tab.cpp"
     break;
 
-  case 8: /* args: args WORD  */
+  case 8: /* args: TILDE  */
 #line 36 "nutshell.ypp"
-            { string s((yyvsp[0].val)); currCommand.addArg(s); }
-#line 1377 "nutshell.tab.cpp"
+                { currCommand.addArg(envs["HOME"]); }
+#line 1381 "nutshell.tab.cpp"
+    break;
+
+  case 9: /* args: TILDE WORD  */
+#line 37 "nutshell.ypp"
+                { string s((yyvsp[0].val)); currCommand.addArg(envs["HOME"] + s); }
+#line 1387 "nutshell.tab.cpp"
+    break;
+
+  case 10: /* args: args WORD  */
+#line 38 "nutshell.ypp"
+                { string s((yyvsp[0].val)); currCommand.addArg(s); }
+#line 1393 "nutshell.tab.cpp"
     break;
 
 
-#line 1381 "nutshell.tab.cpp"
+#line 1397 "nutshell.tab.cpp"
 
       default: break;
     }
@@ -1602,4 +1618,4 @@ yyreturn:
   return yyresult;
 }
 
-#line 38 "nutshell.ypp"
+#line 40 "nutshell.ypp"

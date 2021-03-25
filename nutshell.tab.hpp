@@ -67,7 +67,8 @@ extern int yydebug;
     YYUNDEF = 257,                 /* "invalid token"  */
     WORD = 258,                    /* WORD  */
     STOP = 259,                    /* STOP  */
-    EXIT = 260                     /* EXIT  */
+    EXIT = 260,                    /* EXIT  */
+    TILDE = 261                    /* TILDE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -80,7 +81,7 @@ union YYSTYPE
 
     char* val;
 
-#line 84 "nutshell.tab.hpp"
+#line 85 "nutshell.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

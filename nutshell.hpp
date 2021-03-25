@@ -22,4 +22,6 @@ extern std::unordered_map<std::string, std::string> aliases;
 
 extern std::unordered_map<std::string, std::string> envs;
 
+extern std::vector<std::string> reserved;
+
 void parseCMD();

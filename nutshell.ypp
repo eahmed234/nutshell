@@ -1,9 +1,6 @@
 %code requires {
-    #include <unistd.h>
-    #include <cstdlib>
     #include <iostream>
-    #include <string>
-    #include <map>
+    #include "nutshell.hpp"
     using namespace std;
 
     int yylex(); 
@@ -13,8 +10,6 @@
     void yyerror(const char* description) { 
     	cout << description << endl; 
     }
-
-    bool keepgoing = true;
 }
 
 %define parse.error verbose
@@ -50,12 +45,3 @@ factor: NUM            { $$ = $1; }
 | LP exp RP            { $$ = $2; }
 
 %%
-
-int main()  {
-    while (keepgoing) {
-        cout << "> " << flush;
-        yyparse();
-    }
-    cout << "Goodbye" << endl;
-    return 0;
-}

@@ -115,15 +115,13 @@ typedef enum yysymbol_kind_t yysymbol_kind_t;
 
 
 /* Unqualified %code blocks.  */
-#line 12 "nutshell.ypp"
+#line 9 "nutshell.ypp"
 
     void yyerror(const char* description) { 
     	cout << description << endl; 
     }
 
-    bool keepgoing = true;
-
-#line 127 "nutshell.tab.cpp"
+#line 125 "nutshell.tab.cpp"
 
 #ifdef short
 # undef short
@@ -499,8 +497,8 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    35,    35,    36,    38,    40,    41,    43,    44,    46,
-      47,    49,    50
+       0,    30,    30,    31,    33,    35,    36,    38,    39,    41,
+      42,    44,    45
 };
 #endif
 
@@ -1348,73 +1346,73 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* program: stmt  */
-#line 35 "nutshell.ypp"
+#line 30 "nutshell.ypp"
               { YYACCEPT; }
-#line 1354 "nutshell.tab.cpp"
+#line 1352 "nutshell.tab.cpp"
     break;
 
   case 3: /* program: %empty  */
-#line 36 "nutshell.ypp"
+#line 31 "nutshell.ypp"
         { keepgoing = false; }
-#line 1360 "nutshell.tab.cpp"
+#line 1358 "nutshell.tab.cpp"
     break;
 
   case 4: /* stmt: exp STOP  */
-#line 38 "nutshell.ypp"
+#line 33 "nutshell.ypp"
                { cout << (yyvsp[-1].val) << endl; }
-#line 1366 "nutshell.tab.cpp"
+#line 1364 "nutshell.tab.cpp"
     break;
 
   case 5: /* exp: exp OPA term  */
-#line 40 "nutshell.ypp"
+#line 35 "nutshell.ypp"
                        { (yyval.val) = ((yyvsp[-1].sym) == '+' ? (yyvsp[-2].val) + (yyvsp[0].val) : (yyvsp[-2].val) - (yyvsp[0].val)); }
-#line 1372 "nutshell.tab.cpp"
+#line 1370 "nutshell.tab.cpp"
     break;
 
   case 6: /* exp: term  */
-#line 41 "nutshell.ypp"
+#line 36 "nutshell.ypp"
                        { (yyval.val) = (yyvsp[0].val); }
-#line 1378 "nutshell.tab.cpp"
+#line 1376 "nutshell.tab.cpp"
     break;
 
   case 7: /* term: term OPM sfactor  */
-#line 43 "nutshell.ypp"
+#line 38 "nutshell.ypp"
                        { (yyval.val) = ((yyvsp[-1].sym) == '*' ? (yyvsp[-2].val) * (yyvsp[0].val) : (yyvsp[-2].val) / (yyvsp[0].val)); }
-#line 1384 "nutshell.tab.cpp"
+#line 1382 "nutshell.tab.cpp"
     break;
 
   case 8: /* term: sfactor  */
-#line 44 "nutshell.ypp"
+#line 39 "nutshell.ypp"
                        { (yyval.val) = (yyvsp[0].val); }
-#line 1390 "nutshell.tab.cpp"
+#line 1388 "nutshell.tab.cpp"
     break;
 
   case 9: /* sfactor: OPA factor  */
-#line 46 "nutshell.ypp"
+#line 41 "nutshell.ypp"
                        { (yyval.val) = ((yyvsp[-1].sym) == '+' ? (yyvsp[0].val) : -(yyvsp[0].val)); }
-#line 1396 "nutshell.tab.cpp"
+#line 1394 "nutshell.tab.cpp"
     break;
 
   case 10: /* sfactor: factor  */
-#line 47 "nutshell.ypp"
+#line 42 "nutshell.ypp"
                        { (yyval.val) = (yyvsp[0].val); }
-#line 1402 "nutshell.tab.cpp"
+#line 1400 "nutshell.tab.cpp"
     break;
 
   case 11: /* factor: NUM  */
-#line 49 "nutshell.ypp"
+#line 44 "nutshell.ypp"
                        { (yyval.val) = (yyvsp[0].val); }
-#line 1408 "nutshell.tab.cpp"
+#line 1406 "nutshell.tab.cpp"
     break;
 
   case 12: /* factor: LP exp RP  */
-#line 50 "nutshell.ypp"
+#line 45 "nutshell.ypp"
                        { (yyval.val) = (yyvsp[-1].val); }
-#line 1414 "nutshell.tab.cpp"
+#line 1412 "nutshell.tab.cpp"
     break;
 
 
-#line 1418 "nutshell.tab.cpp"
+#line 1416 "nutshell.tab.cpp"
 
       default: break;
     }
@@ -1639,14 +1637,4 @@ yyreturn:
   return yyresult;
 }
 
-#line 52 "nutshell.ypp"
-
-
-int main()  {
-    while (keepgoing) {
-        cout << "> " << flush;
-        yyparse();
-    }
-    cout << "Goodbye" << endl;
-    return 0;
-}
+#line 47 "nutshell.ypp"

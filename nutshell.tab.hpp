@@ -47,16 +47,13 @@ extern int yydebug;
 /* "%code requires" blocks.  */
 #line 1 "nutshell.ypp"
 
-    #include <unistd.h>
-    #include <cstdlib>
     #include <iostream>
-    #include <string>
-    #include <map>
+    #include "nutshell.hpp"
     using namespace std;
 
     int yylex(); 
 
-#line 60 "nutshell.tab.hpp"
+#line 57 "nutshell.tab.hpp"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -81,12 +78,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 22 "nutshell.ypp"
+#line 17 "nutshell.ypp"
 
     int val; 
     char sym;
 
-#line 90 "nutshell.tab.hpp"
+#line 87 "nutshell.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

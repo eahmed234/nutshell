@@ -96,32 +96,27 @@ enum yysymbol_kind_t
   YYSYMBOL_YYEOF = 0,                      /* "end of file"  */
   YYSYMBOL_YYerror = 1,                    /* error  */
   YYSYMBOL_YYUNDEF = 2,                    /* "invalid token"  */
-  YYSYMBOL_NUM = 3,                        /* NUM  */
-  YYSYMBOL_OPA = 4,                        /* OPA  */
-  YYSYMBOL_OPM = 5,                        /* OPM  */
-  YYSYMBOL_LP = 6,                         /* LP  */
-  YYSYMBOL_RP = 7,                         /* RP  */
-  YYSYMBOL_STOP = 8,                       /* STOP  */
-  YYSYMBOL_YYACCEPT = 9,                   /* $accept  */
-  YYSYMBOL_program = 10,                   /* program  */
-  YYSYMBOL_stmt = 11,                      /* stmt  */
-  YYSYMBOL_exp = 12,                       /* exp  */
-  YYSYMBOL_term = 13,                      /* term  */
-  YYSYMBOL_sfactor = 14,                   /* sfactor  */
-  YYSYMBOL_factor = 15                     /* factor  */
+  YYSYMBOL_WORD = 3,                       /* WORD  */
+  YYSYMBOL_STOP = 4,                       /* STOP  */
+  YYSYMBOL_EXIT = 5,                       /* EXIT  */
+  YYSYMBOL_YYACCEPT = 6,                   /* $accept  */
+  YYSYMBOL_program = 7,                    /* program  */
+  YYSYMBOL_line = 8,                       /* line  */
+  YYSYMBOL_cmd = 9,                        /* cmd  */
+  YYSYMBOL_args = 10                       /* args  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
 
 
 /* Unqualified %code blocks.  */
-#line 9 "nutshell.ypp"
+#line 10 "nutshell.ypp"
 
     void yyerror(const char* description) { 
     	cout << description << endl; 
     }
 
-#line 125 "nutshell.tab.cpp"
+#line 120 "nutshell.tab.cpp"
 
 #ifdef short
 # undef short
@@ -436,21 +431,21 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  12
+#define YYFINAL  8
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   14
+#define YYLAST   5
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  9
+#define YYNTOKENS  6
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  7
+#define YYNNTS  5
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  12
+#define YYNRULES  8
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  19
+#define YYNSTATES  11
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   263
+#define YYMAXUTOK   260
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -490,15 +485,14 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8
+       5
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    30,    30,    31,    33,    35,    36,    38,    39,    41,
-      42,    44,    45
+       0,    27,    27,    28,    30,    32,    33,    35,    36
 };
 #endif
 
@@ -514,9 +508,8 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "\"end of file\"", "error", "\"invalid token\"", "NUM", "OPA", "OPM",
-  "LP", "RP", "STOP", "$accept", "program", "stmt", "exp", "term",
-  "sfactor", "factor", YY_NULLPTR
+  "\"end of file\"", "error", "\"invalid token\"", "WORD", "STOP", "EXIT",
+  "$accept", "program", "line", "cmd", "args", YY_NULLPTR
 };
 
 static const char *
@@ -531,11 +524,11 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    (internal) symbol number NUM (which must be that of a token).  */
 static const yytype_int16 yytoknum[] =
 {
-       0,   256,   257,   258,   259,   260,   261,   262,   263
+       0,   256,   257,   258,   259,   260
 };
 #endif
 
-#define YYPACT_NINF (-5)
+#define YYPACT_NINF (-4)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -549,8 +542,8 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -1,    -5,     3,    -1,     1,    -5,    -4,     2,    -5,    -5,
-      -5,     4,    -5,    -1,    -5,    -1,    -5,     2,    -5
+      -3,    -2,    -4,     3,    -4,     0,    -4,     2,    -4,    -4,
+      -4
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -558,20 +551,20 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       3,    11,     0,     0,     0,     2,     0,     6,     8,    10,
-       9,     0,     1,     0,     4,     0,    12,     5,     7
+       0,     5,     3,     0,     2,     0,     7,     6,     1,     4,
+       8
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -5,    -5,    -5,     7,     0,    -3,    12
+      -4,    -4,    -4,    -4,    -4
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     4,     5,     6,     7,     8,     9
+       0,     3,     4,     5,     7
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -579,36 +572,32 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      13,    12,     1,     2,    14,     3,     1,    15,    13,     3,
-      11,    16,    18,    17,    10
+       1,     6,     2,     8,     9,    10
 };
 
 static const yytype_int8 yycheck[] =
 {
-       4,     0,     3,     4,     8,     6,     3,     5,     4,     6,
-       3,     7,    15,    13,     2
+       3,     3,     5,     0,     4,     3
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,     4,     6,    10,    11,    12,    13,    14,    15,
-      15,    12,     0,     4,     8,     5,     7,    13,    14
+       0,     3,     5,     7,     8,     9,     3,    10,     0,     4,
+       3
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,     9,    10,    10,    11,    12,    12,    13,    13,    14,
-      14,    15,    15
+       0,     6,     7,     7,     8,     9,     9,    10,    10
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     0,     2,     3,     1,     3,     1,     2,
-       1,     1,     3
+       0,     2,     1,     1,     2,     1,     2,     1,     2
 };
 
 
@@ -1345,74 +1334,50 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 2: /* program: stmt  */
-#line 30 "nutshell.ypp"
+  case 2: /* program: line  */
+#line 27 "nutshell.ypp"
               { YYACCEPT; }
-#line 1352 "nutshell.tab.cpp"
+#line 1341 "nutshell.tab.cpp"
     break;
 
-  case 3: /* program: %empty  */
-#line 31 "nutshell.ypp"
-        { keepgoing = false; }
-#line 1358 "nutshell.tab.cpp"
+  case 3: /* program: EXIT  */
+#line 28 "nutshell.ypp"
+       { cout << "Goodbye!\n"; exit(0); }
+#line 1347 "nutshell.tab.cpp"
     break;
 
-  case 4: /* stmt: exp STOP  */
+  case 4: /* line: cmd STOP  */
+#line 30 "nutshell.ypp"
+               { parseCMD(); }
+#line 1353 "nutshell.tab.cpp"
+    break;
+
+  case 5: /* cmd: WORD  */
+#line 32 "nutshell.ypp"
+            { string s((yyvsp[0].val)); currCommand.addCommand(s); }
+#line 1359 "nutshell.tab.cpp"
+    break;
+
+  case 6: /* cmd: WORD args  */
 #line 33 "nutshell.ypp"
-               { cout << (yyvsp[-1].val) << endl; }
-#line 1364 "nutshell.tab.cpp"
+             { string s((yyvsp[-1].val)); currCommand.addCommand(s); }
+#line 1365 "nutshell.tab.cpp"
     break;
 
-  case 5: /* exp: exp OPA term  */
+  case 7: /* args: WORD  */
 #line 35 "nutshell.ypp"
-                       { (yyval.val) = ((yyvsp[-1].sym) == '+' ? (yyvsp[-2].val) + (yyvsp[0].val) : (yyvsp[-2].val) - (yyvsp[0].val)); }
-#line 1370 "nutshell.tab.cpp"
+           { string s((yyvsp[0].val)); currCommand.addArg(s); }
+#line 1371 "nutshell.tab.cpp"
     break;
 
-  case 6: /* exp: term  */
+  case 8: /* args: args WORD  */
 #line 36 "nutshell.ypp"
-                       { (yyval.val) = (yyvsp[0].val); }
-#line 1376 "nutshell.tab.cpp"
-    break;
-
-  case 7: /* term: term OPM sfactor  */
-#line 38 "nutshell.ypp"
-                       { (yyval.val) = ((yyvsp[-1].sym) == '*' ? (yyvsp[-2].val) * (yyvsp[0].val) : (yyvsp[-2].val) / (yyvsp[0].val)); }
-#line 1382 "nutshell.tab.cpp"
-    break;
-
-  case 8: /* term: sfactor  */
-#line 39 "nutshell.ypp"
-                       { (yyval.val) = (yyvsp[0].val); }
-#line 1388 "nutshell.tab.cpp"
-    break;
-
-  case 9: /* sfactor: OPA factor  */
-#line 41 "nutshell.ypp"
-                       { (yyval.val) = ((yyvsp[-1].sym) == '+' ? (yyvsp[0].val) : -(yyvsp[0].val)); }
-#line 1394 "nutshell.tab.cpp"
-    break;
-
-  case 10: /* sfactor: factor  */
-#line 42 "nutshell.ypp"
-                       { (yyval.val) = (yyvsp[0].val); }
-#line 1400 "nutshell.tab.cpp"
-    break;
-
-  case 11: /* factor: NUM  */
-#line 44 "nutshell.ypp"
-                       { (yyval.val) = (yyvsp[0].val); }
-#line 1406 "nutshell.tab.cpp"
-    break;
-
-  case 12: /* factor: LP exp RP  */
-#line 45 "nutshell.ypp"
-                       { (yyval.val) = (yyvsp[-1].val); }
-#line 1412 "nutshell.tab.cpp"
+            { string s((yyvsp[0].val)); currCommand.addArg(s); }
+#line 1377 "nutshell.tab.cpp"
     break;
 
 
-#line 1416 "nutshell.tab.cpp"
+#line 1381 "nutshell.tab.cpp"
 
       default: break;
     }
@@ -1637,4 +1602,4 @@ yyreturn:
   return yyresult;
 }
 
-#line 47 "nutshell.ypp"
+#line 38 "nutshell.ypp"

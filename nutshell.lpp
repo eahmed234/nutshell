@@ -1,20 +1,18 @@
 %{
-#include "nutshell.tab.hpp"
-#include <cstdlib>
+    #include <string.h>
+    #include "nutshell.tab.hpp"
 %}
 
 %option noyywrap
 
 %%
 
-[0-9]+    { yylval.val = atoi(yytext); return NUM; }
-[+-]      { yylval.sym = yytext[0]; return OPA; }
-[*/]      { yylval.sym = yytext[0]; return OPM; }
-"("       { return LP; }
-")"       { return RP; }
-";"       { return STOP; }
-<<EOF>>   { return 0; }
-[ \t\n]+  { }
-.         { cout << "Unrecognized token starting with " << yytext[0] << endl; exit(1); }
+"bye"               { return EXIT; }
+[a-zA-Z/]+          { yylval.val = strdup(yytext); return WORD; }
+\"(\\.|[^"\\])*\"   { yylval.val = strdup(yytext); return WORD; }
+[\n]                { return STOP; }
+<<EOF>>             { return 0; }
+[ \t]+              { }
+.                   { cout << "Unrecognized token starting with " << yytext[0] << endl; exit(1); }
 
 %%

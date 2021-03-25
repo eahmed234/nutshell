@@ -48,12 +48,13 @@ extern int yydebug;
 #line 1 "nutshell.ypp"
 
     #include <iostream>
+    #include <cstdlib>
     #include "nutshell.hpp"
     using namespace std;
 
     int yylex(); 
 
-#line 57 "nutshell.tab.hpp"
+#line 58 "nutshell.tab.hpp"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -64,12 +65,9 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    NUM = 258,                     /* NUM  */
-    OPA = 259,                     /* OPA  */
-    OPM = 260,                     /* OPM  */
-    LP = 261,                      /* LP  */
-    RP = 262,                      /* RP  */
-    STOP = 263                     /* STOP  */
+    WORD = 258,                    /* WORD  */
+    STOP = 259,                    /* STOP  */
+    EXIT = 260                     /* EXIT  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -78,12 +76,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 17 "nutshell.ypp"
+#line 18 "nutshell.ypp"
 
-    int val; 
-    char sym;
+    char* val;
 
-#line 87 "nutshell.tab.hpp"
+#line 84 "nutshell.tab.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

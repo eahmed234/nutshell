@@ -8,11 +8,11 @@
 %%
 
 "bye"               { return EXIT; }
-[a-zA-Z/]+          { yylval.val = strdup(yytext); return WORD; }
+[a-zA-Z/-]+         { yylval.val = strdup(yytext); return WORD; }
 \"(\\.|[^"\\])*\"   { yylval.val = strdup(yytext); return WORD; }
 [\n]                { return STOP; }
 <<EOF>>             { return 0; }
 [ \t]+              { }
-.                   { cout << "Unrecognized token starting with " << yytext[0] << endl; exit(1); }
+.                   { cout << "Unrecognized token starting with " << yytext[0] << endl; }
 
 %%

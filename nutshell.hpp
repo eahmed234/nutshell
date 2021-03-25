@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <unordered_map>
+#include <map>
 
 struct CMD {
     std::string command;
@@ -18,9 +18,9 @@ struct CMD {
 
 extern CMD currCommand;
 
-extern std::unordered_map<std::string, std::string> aliases;
+extern std::map<std::string, std::string> aliases;
 
-extern std::unordered_map<std::string, std::string> envs;
+extern std::map<std::string, std::string> envs;
 
 extern std::vector<std::string> reserved;
 

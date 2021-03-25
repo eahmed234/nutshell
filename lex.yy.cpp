@@ -376,7 +376,7 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    2,    1,    4,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    5,    1,    1,    1,
+        1,    1,    1,    1,    5,    1,    5,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    5,    5,    5,    5,    5,    5,
         5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
@@ -765,7 +765,7 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 16 "nutshell.lpp"
-{ cout << "Unrecognized token starting with " << yytext[0] << endl; exit(1); }
+{ cout << "Unrecognized token starting with " << yytext[0] << endl; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP

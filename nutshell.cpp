@@ -9,9 +9,9 @@ using namespace std;
 
 CMD currCommand;
 
-unordered_map<string, string> aliases;
+map<string, string> aliases;
 
-unordered_map<string, string> envs;
+map<string, string> envs;
 
 vector<string> reserved = {
     "setenv",
@@ -25,16 +25,13 @@ vector<string> reserved = {
 
 void execCMD() {
     string binPath = "/bin/" + currCommand.command;
+    vector<char*> args = { &binPath[0] };
+    for (auto& arg : currCommand.args) {
+        args.push_back(&arg[0]);
+    }
     pid_t p = fork();
     if (p == 0) {
-        switch (currCommand.args.size()) {
-            case 0:
-                execl(binPath.c_str(), binPath.c_str(), NULL);
-                break;
-            case 1:
-                execl(binPath.c_str(), binPath.c_str(), currCommand.args.at(0).c_str(), NULL);
-                break;
-        }  
+        execv(binPath.c_str(), &args[0]); 
     } else {
         wait(NULL);
     }
@@ -57,6 +54,14 @@ void parseCMD() {
         }
     } else if (currCommand.command == "unalias") {
         aliases.erase(currCommand.args.at(0));
+    } else if (currCommand.command == "printenv") {
+        for(auto& env : envs) {
+            cout << env.first << "=" << env.second << '\n';
+        }
+    } else if (currCommand.command == "setenv") {
+        envs[currCommand.args.at(0)] = currCommand.args.at(1);
+    } else if (currCommand.command == "unsetenv") {
+        envs.erase(currCommand.args.at(0));
     }
     currCommand.command.clear();
     currCommand.args.clear();
@@ -68,6 +73,7 @@ int main() {
         homedir = getpwuid(getuid())->pw_dir;
     }
     envs["HOME"] = homedir;
+    envs["PATH"] = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin";
 
     while (true) {
         cout << "> " << flush;

@@ -33,7 +33,7 @@ void updatePathVars() {
     string item;
 
     while (getline(ss, item, ':')) {
-        pathVars.push_back (item);
+        pathVars.push_back(item);
     }
 }
 
@@ -76,12 +76,32 @@ void execHelper() {
 }
 
 void parseCMD() {
+    auto it = aliases.find(currCommand.command);
+    if (it != aliases.end()) {
+        string fullCommand = it->second;
+        fullCommand.erase(remove(fullCommand.begin(), fullCommand.end(), '\"'), fullCommand.end());
+        stringstream ss(fullCommand);
+        string command;
+        ss >> command;
+        currCommand.command = command;
+        currCommand.args.clear();
+        string arg;
+        while (ss >> arg) {
+            currCommand.args.push_back(arg);
+        }
+        parseCMD();
+        currCommand.command.clear();
+        currCommand.args.clear();
+        return;
+    }
+
     if (find(reserved.begin(), reserved.end(), currCommand.command) == reserved.end()) {
         execHelper();
         currCommand.command.clear();
         currCommand.args.clear();
         return;
     }
+
     if (currCommand.command == "alias") {
         if (currCommand.args.empty()) {
             for (auto& alias : aliases) {

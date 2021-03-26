@@ -1,9 +1,10 @@
 #include <iostream>
 #include <algorithm>
+#include <sstream>
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
-#include<sys/wait.h>  
+#include <sys/wait.h>  
 #include "nutshell.tab.hpp"
 using namespace std;
 
@@ -23,23 +24,49 @@ vector<string> reserved = {
     "bye"
 };
 
-void execCMD() {
-    string binPath = "/bin/" + currCommand.command;
+vector<string> pathVars;
+
+void updatePathVars() {
+    pathVars.clear();
+    stringstream ss(envs["PATH"]);
+    string item;
+
+    while (getline(ss, item, ':')) {
+        pathVars.push_back (item);
+    }
+}
+
+int execCMD(string binPath) {
     vector<char*> args = { &binPath[0] };
     for (auto& arg : currCommand.args) {
         args.push_back(&arg[0]);
     }
+    args.push_back(NULL);
     pid_t p = fork();
     if (p == 0) {
-        execv(binPath.c_str(), &args[0]); 
+        execv(binPath.c_str(), &args[0]);
+        exit(EXIT_FAILURE);
     } else {
-        wait(NULL);
+        int status;
+        waitpid(p, &status, 0);
+        return WIFEXITED(status);
+    }
+    return 0;
+}
+
+void execHelper() {
+    if (currCommand.command[0] == '.' || currCommand.command[0] == '/') {
+        execCMD(currCommand.command);
+    }
+    for (auto& path : pathVars) {
+        if (execCMD(path + '/' + currCommand.command) == 0)
+            return;
     }
 }
 
 void parseCMD() {
     if (find(reserved.begin(), reserved.end(), currCommand.command) == reserved.end()) {
-        execCMD();
+        execHelper();
         currCommand.command.clear();
         currCommand.args.clear();
         return;
@@ -60,8 +87,11 @@ void parseCMD() {
         }
     } else if (currCommand.command == "setenv") {
         envs[currCommand.args.at(0)] = currCommand.args.at(1);
+        updatePathVars();
     } else if (currCommand.command == "unsetenv") {
         envs.erase(currCommand.args.at(0));
+    } else if (currCommand.command == "cd") {
+        chdir(currCommand.args.at(0).c_str());
     }
     currCommand.command.clear();
     currCommand.args.clear();
@@ -73,7 +103,8 @@ int main() {
         homedir = getpwuid(getuid())->pw_dir;
     }
     envs["HOME"] = homedir;
-    envs["PATH"] = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin";
+    envs["PATH"] = "/home/eahmed234/lab5:/bin:/usr/local/bin";
+    updatePathVars();
 
     while (true) {
         cout << "> " << flush;

@@ -24,17 +24,19 @@
 
 %%
 
-program: line   { YYACCEPT; }
-| EXIT          { cout << "Goodbye!\n"; exit(0); }
+program: line       { YYACCEPT; }
+| EXIT              { cout << "Goodbye!\n"; exit(0); }
 
-line: cmd STOP  { parseCMD(); }
+line: cmd STOP      { parseCMD(); }
 
-cmd: WORD       { string s($1); currCommand.addCommand(s); }
-| WORD args     { string s($1); currCommand.addCommand(s); }
+cmd: WORD           { string s($1); currCommand.addCommand(s); }
+| TILDE WORD        { string s($2); currCommand.addCommand(envs["HOME"] + s); } 
+| TILDE WORD args   { string s($2); currCommand.addCommand(envs["HOME"] + s); }
+| WORD args         { string s($1); currCommand.addCommand(s); }
 
-args: WORD      { string s($1); currCommand.addArg(s); }
-| TILDE         { currCommand.addArg(envs["HOME"]); }
-| TILDE WORD    { string s($2); currCommand.addArg(envs["HOME"] + s); }
-| args WORD     { string s($2); currCommand.addArg(s); }
+args: WORD          { string s($1); currCommand.addArg(s); }
+| TILDE             { currCommand.addArg(envs["HOME"]); }
+| TILDE WORD        { string s($2); currCommand.addArg(envs["HOME"] + s); }
+| args WORD         { string s($2); currCommand.addArg(s); }
 
 %%

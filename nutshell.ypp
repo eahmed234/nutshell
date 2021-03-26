@@ -29,14 +29,14 @@ program: line       { YYACCEPT; }
 
 line: cmd STOP      { parseCMD(); }
 
-cmd: WORD           { string s($1); currCommand.addCommand(s); }
-| TILDE WORD        { string s($2); currCommand.addCommand(envs["HOME"] + s); } 
-| TILDE WORD args   { string s($2); currCommand.addCommand(envs["HOME"] + s); }
-| WORD args         { string s($1); currCommand.addCommand(s); }
+cmd: WORD           { currCommand.addCommand($1); free($1);}
+| TILDE WORD        { currCommand.addCommand(envs["HOME"] + $2); free($2);} 
+| TILDE WORD args   { currCommand.addCommand(envs["HOME"] + $2); free($2);}
+| WORD args         { currCommand.addCommand($1); free($1);}
 
-args: WORD          { string s($1); currCommand.addArg(s); }
+args: WORD          { currCommand.addArg($1); free($1);}
 | TILDE             { currCommand.addArg(envs["HOME"]); }
-| TILDE WORD        { string s($2); currCommand.addArg(envs["HOME"] + s); }
-| args WORD         { string s($2); currCommand.addArg(s); }
+| TILDE WORD        { currCommand.addArg(envs["HOME"] + $2); free($2);}
+| args WORD         { currCommand.addArg($2); free($2);}
 
 %%

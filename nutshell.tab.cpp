@@ -1360,31 +1360,31 @@ yyreduce:
 
   case 5: /* cmd: WORD  */
 #line 32 "nutshell.ypp"
-                    { string s((yyvsp[0].val)); currCommand.addCommand(s); }
+                    { currCommand.addCommand((yyvsp[0].val)); free((yyvsp[0].val));}
 #line 1365 "nutshell.tab.cpp"
     break;
 
   case 6: /* cmd: TILDE WORD  */
 #line 33 "nutshell.ypp"
-                    { string s((yyvsp[0].val)); currCommand.addCommand(envs["HOME"] + s); }
+                    { currCommand.addCommand(envs["HOME"] + (yyvsp[0].val)); free((yyvsp[0].val));}
 #line 1371 "nutshell.tab.cpp"
     break;
 
   case 7: /* cmd: TILDE WORD args  */
 #line 34 "nutshell.ypp"
-                    { string s((yyvsp[-1].val)); currCommand.addCommand(envs["HOME"] + s); }
+                    { currCommand.addCommand(envs["HOME"] + (yyvsp[-1].val)); free((yyvsp[-1].val));}
 #line 1377 "nutshell.tab.cpp"
     break;
 
   case 8: /* cmd: WORD args  */
 #line 35 "nutshell.ypp"
-                    { string s((yyvsp[-1].val)); currCommand.addCommand(s); }
+                    { currCommand.addCommand((yyvsp[-1].val)); free((yyvsp[-1].val));}
 #line 1383 "nutshell.tab.cpp"
     break;
 
   case 9: /* args: WORD  */
 #line 37 "nutshell.ypp"
-                    { string s((yyvsp[0].val)); currCommand.addArg(s); }
+                    { currCommand.addArg((yyvsp[0].val)); free((yyvsp[0].val));}
 #line 1389 "nutshell.tab.cpp"
     break;
 
@@ -1396,13 +1396,13 @@ yyreduce:
 
   case 11: /* args: TILDE WORD  */
 #line 39 "nutshell.ypp"
-                    { string s((yyvsp[0].val)); currCommand.addArg(envs["HOME"] + s); }
+                    { currCommand.addArg(envs["HOME"] + (yyvsp[0].val)); free((yyvsp[0].val));}
 #line 1401 "nutshell.tab.cpp"
     break;
 
   case 12: /* args: args WORD  */
 #line 40 "nutshell.ypp"
-                    { string s((yyvsp[0].val)); currCommand.addArg(s); }
+                    { currCommand.addArg((yyvsp[0].val)); free((yyvsp[0].val));}
 #line 1407 "nutshell.tab.cpp"
     break;
 

@@ -4,7 +4,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
-#include <sys/wait.h>  
+#include <sys/wait.h> 
+#include <limits.h> 
 #include "nutshell.tab.hpp"
 using namespace std;
 
@@ -22,7 +23,7 @@ vector<string> reserved = {
     "alias",
     "unalias",
     "bye"
-};
+}; 
 
 vector<string> pathVars;
 
@@ -43,25 +44,35 @@ int execCMD(string binPath) {
     }
     args.push_back(NULL);
     pid_t p = fork();
-    if (p == 0) {
+
+    if (p < 0) {
+        cerr << "Fork failed\n";
+        return -1; 
+    } else if (p == 0) {
         execv(binPath.c_str(), &args[0]);
-        exit(EXIT_FAILURE);
+        exit(1);
     } else {
         int status;
-        waitpid(p, &status, 0);
-        return WIFEXITED(status);
+        wait(&status);
+        return WIFEXITED(status) ? WEXITSTATUS(status) : -WTERMSIG(status);
     }
     return 0;
 }
 
 void execHelper() {
+    bool succ = false;
     if (currCommand.command[0] == '.' || currCommand.command[0] == '/') {
-        execCMD(currCommand.command);
+        if (execCMD(currCommand.command) == 0) succ = true;
+    } else {
+        for (auto& path : pathVars) {
+            if (execCMD(path + '/' + currCommand.command) == 0) {
+                succ = true;
+                break;
+            }
+        }
     }
-    for (auto& path : pathVars) {
-        if (execCMD(path + '/' + currCommand.command) == 0)
-            return;
-    }
+    if (!succ)
+        cerr << "Invalid command\n";
 }
 
 void parseCMD() {
@@ -91,23 +102,32 @@ void parseCMD() {
     } else if (currCommand.command == "unsetenv") {
         envs.erase(currCommand.args.at(0));
     } else if (currCommand.command == "cd") {
-        chdir(currCommand.args.at(0).c_str());
+        if (currCommand.args.size() == 0) {
+            chdir(envs["HOME"].c_str());
+        } else {
+            chdir(currCommand.args.at(0).c_str());
+        }
     }
     currCommand.command.clear();
     currCommand.args.clear();
 }
 
 int main() {
+    auto pw = getpwuid(getuid());
     const char* homedir;
     if ((homedir = getenv("HOME")) == NULL) {
-        homedir = getpwuid(getuid())->pw_dir;
+        homedir = pw->pw_dir;
     }
     envs["HOME"] = homedir;
-    envs["PATH"] = "/home/eahmed234/lab5:/bin:/usr/local/bin";
+    envs["PATH"] = "/bin:/usr/local/bin";
     updatePathVars();
 
+    string username = pw->pw_name;
+
     while (true) {
-        cout << "> " << flush;
+        char cwd[PATH_MAX];
+        getcwd(cwd, sizeof(cwd));
+        cout << username << ":" << cwd << "> " << flush;
         yyparse();
     }
     return 0;

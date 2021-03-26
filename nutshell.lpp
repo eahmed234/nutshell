@@ -9,8 +9,8 @@
 
 "bye"               { return EXIT; }
 [~]                 { return TILDE; }
-[a-zA-Z0-9/\-\.]+   { yylval.val = strdup(yytext); return WORD; }
 \"(\\.|[^"\\])*\"   { yylval.val = strdup(yytext); return WORD; }
+[^ &<>\|\\\"\n\t]+  { yylval.val = strdup(yytext); return WORD; }
 [\n]                { return STOP; }
 <<EOF>>             { return 0; }
 [ \t]+              { }

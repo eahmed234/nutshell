@@ -22,4 +22,6 @@ extern std::map<std::string, std::string> aliases;
 
 extern std::map<std::string, std::string> envs;
 
+std::string expandVars(std::string s);
+
 void parseCMD();

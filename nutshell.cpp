@@ -117,6 +117,30 @@ void parseCMD() {
     currCommand.args.clear();
 }
 
+string expandVars(string s) {
+    if (s.find("~") != string::npos) {
+        size_t pos = 0;
+        while ((pos = s.find("~", pos)) != string::npos) {
+            s.replace(pos, 1, envs["HOME"]);
+            pos += envs["HOME"].length();
+        }
+    }
+
+    if( s.find( "${" ) == string::npos ) return s;
+
+    string pre  = s.substr( 0, s.find( "${" ) );
+    string post = s.substr( s.find( "${" ) + 2 );
+
+    if( post.find( '}' ) == string::npos ) return s;
+
+    string variable = post.substr( 0, post.find( '}' ) );
+    string value = envs[variable];
+
+    post = post.substr( post.find( '}' ) + 1 );
+
+    return expandVars( pre + value + post );
+}
+
 int main() {
     auto pw = getpwuid(getuid());
     const char* homedir;

@@ -20,7 +20,7 @@
 };
 
 %token <val> WORD
-%token STOP EXIT TILDE
+%token STOP EXIT
 
 %%
 
@@ -29,14 +29,10 @@ program: line       { YYACCEPT; }
 
 line: cmd STOP      { parseCMD(); }
 
-cmd: WORD           { currCommand.addCommand($1); free($1);}
-| TILDE WORD        { currCommand.addCommand(envs["HOME"] + $2); free($2);} 
-| TILDE WORD args   { currCommand.addCommand(envs["HOME"] + $2); free($2);}
-| WORD args         { currCommand.addCommand($1); free($1);}
+cmd: WORD           { currCommand.addCommand(expandVars($1)); free($1); }
+| WORD args         { currCommand.addCommand(expandVars($1)); free($1);}
 
-args: WORD          { currCommand.addArg($1); free($1);}
-| TILDE             { currCommand.addArg(envs["HOME"]); }
-| TILDE WORD        { currCommand.addArg(envs["HOME"] + $2); free($2);}
-| args WORD         { currCommand.addArg($2); free($2);}
+args: WORD          { currCommand.addArg(expandVars($1)); free($1);}
+| args WORD         { currCommand.addArg(expandVars($2)); free($2);}
 
 %%

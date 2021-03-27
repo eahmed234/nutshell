@@ -15,16 +15,6 @@ map<string, string> aliases;
 
 map<string, string> envs;
 
-vector<string> reserved = {
-    "setenv",
-    "printenv",
-    "unsetenv",
-    "cd",
-    "alias",
-    "unalias",
-    "bye"
-}; 
-
 vector<string> pathVars;
 
 void updatePathVars() {
@@ -61,7 +51,7 @@ int execCMD(string binPath) {
 
 void execHelper() {
     bool succ = false;
-    if (currCommand.command[0] == '.' || currCommand.command[0] == '/') {
+    if (currCommand.command[0] == '/') {
         if (execCMD(currCommand.command) == 0) succ = true;
     } else {
         for (auto& path : pathVars) {
@@ -95,13 +85,6 @@ void parseCMD() {
         return;
     }
 
-    if (find(reserved.begin(), reserved.end(), currCommand.command) == reserved.end()) {
-        execHelper();
-        currCommand.command.clear();
-        currCommand.args.clear();
-        return;
-    }
-
     if (currCommand.command == "alias") {
         if (currCommand.args.empty()) {
             for (auto& alias : aliases) {
@@ -127,6 +110,8 @@ void parseCMD() {
         } else {
             chdir(currCommand.args.at(0).c_str());
         }
+    } else {
+        execHelper();
     }
     currCommand.command.clear();
     currCommand.args.clear();
@@ -139,7 +124,7 @@ int main() {
         homedir = pw->pw_dir;
     }
     envs["HOME"] = homedir;
-    envs["PATH"] = "/bin:/usr/local/bin";
+    envs["PATH"] = "/bin:.";
     updatePathVars();
 
     string username = pw->pw_name;

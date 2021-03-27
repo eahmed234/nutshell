@@ -22,6 +22,4 @@ extern std::map<std::string, std::string> aliases;
 
 extern std::map<std::string, std::string> envs;
 
-extern std::vector<std::string> reserved;
-
 void parseCMD();

@@ -9,17 +9,17 @@
 
 %code {
     void yyerror(const char* description) { 
-    	cout << description << endl; 
+    	cerr << description << endl; 
     }
 }
 
 %define parse.error verbose
 
 %union {
-    char* val;
+    char* str;
 };
 
-%token <val> WORD
+%token <str> WORD
 %token STOP EXIT
 
 %%
@@ -27,12 +27,21 @@
 program: line       { YYACCEPT; }
 | EXIT              { cout << "Goodbye!\n"; exit(0); }
 
-line: cmd STOP      { parseCMD(); }
+line: fullcmd STOP      { parseCMD(); }
+| fullcmd redirect STOP { parseCMD(); }
 
-cmd: WORD           { currCommand.addCommand(expandVars($1)); free($1); }
-| WORD args         { currCommand.addCommand(expandVars($1)); free($1);}
+fullcmd: cmd           { }
+| fullcmd '|' cmd      { }
 
-args: WORD          { currCommand.addArg(expandVars($1)); free($1);}
-| args WORD         { currCommand.addArg(expandVars($2)); free($2);}
+cmd: exe        { }
+| exe args      { }
+
+exe: WORD       { currCommand.addCommand(expandVars($1)); free($1); }
+
+args: WORD      { currCommand.addArg(expandVars($1)); free($1); }
+| args WORD     { currCommand.addArg(expandVars($2)); free($2); }
+
+redirect: '>' WORD  { cout << "redirect not implemented\n"; }
+| '<' WORD          { cout << "redirect not implemented\n"; }
 
 %%

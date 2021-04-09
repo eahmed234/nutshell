@@ -148,7 +148,12 @@ int main() {
         homedir = pw->pw_dir;
     }
     envs["HOME"] = homedir;
-    envs["PATH"] = "/bin:.";
+
+    const char* path;
+    if ((path = getenv("PATH")) == NULL) {
+        path = "/bin:.";
+    }
+    envs["PATH"] = path;
     updatePathVars();
 
     string username = pw->pw_name;

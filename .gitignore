@@ -1,0 +1,5 @@
+/.vscode
+/lex.yy.cpp
+/nutshell
+/nutshell.tab.cpp
+/nutshell.tab.hpp

@@ -27,8 +27,8 @@
 program: line       { YYACCEPT; }
 | EXIT              { cout << "Goodbye!\n"; exit(0); }
 
-line: fullcmd STOP      { parseCMD(); }
-| fullcmd redirect STOP { parseCMD(); }
+line: fullcmd STOP      { parseLine(); }
+| fullcmd redirect STOP { parseLine(); }
 
 fullcmd: cmd           { }
 | fullcmd '|' cmd      { }
@@ -36,12 +36,12 @@ fullcmd: cmd           { }
 cmd: exe        { }
 | exe args      { }
 
-exe: WORD       { currCommand.addCommand(expandVars($1)); free($1); }
+exe: WORD       { line.addCommand(expandVars($1)); free($1); }
 
-args: WORD      { currCommand.addArg(expandVars($1)); free($1); }
-| args WORD     { currCommand.addArg(expandVars($2)); free($2); }
+args: WORD      { line.addArg(expandVars($1)); free($1); }
+| args WORD     { line.addArg(expandVars($2)); free($2); }
 
-redirect: '>' WORD  { cout << "redirect not implemented\n"; }
-| '<' WORD          { cout << "redirect not implemented\n"; }
+redirect: '>' WORD  { line.outputRedirect = true; }
+| '<' WORD          { line.inputRedirect = true; }
 
 %%

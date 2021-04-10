@@ -3,20 +3,37 @@
 #include <vector>
 #include <map>
 
-struct CMD {
-    std::string command;
-    std::vector<std::string> args;
+struct Line {
+    struct CMD {
+        std::string command;
+        std::vector<std::string> args;
+    };
+
+    bool inputRedirect = false;
+    bool outputRedirect = false;
+    int i = -1;
+    std::vector<CMD> commands;
 
     void addCommand(std::string _command) {
-        command = _command;
+        CMD c;
+        c.command = _command;
+        commands.push_back(c);
+        ++i;
     }
 
-    void addArg(std::string arg) {
-        args.push_back(arg);
+    void addArg(std::string _arg) {
+        commands.at(i).args.push_back(_arg);
+    }
+
+    void reset() {
+        inputRedirect = false;
+        outputRedirect = false;
+        i = -1;
+        commands.clear();
     }
 };
 
-extern CMD currCommand;
+extern Line line;
 
 extern std::map<std::string, std::string> aliases;
 
@@ -24,4 +41,4 @@ extern std::map<std::string, std::string> envs;
 
 std::string expandVars(std::string s);
 
-void parseCMD();
+void parseLine();

@@ -1,15 +1,18 @@
 #include <iostream>
 #include <algorithm>
 #include <sstream>
+#include <filesystem>
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
 #include <sys/wait.h> 
 #include <limits.h> 
 #include "nutshell.tab.hpp"
+#define READ_END 0
+#define WRITE_END 1
 using namespace std;
 
-CMD currCommand;
+Line line;
 
 map<string, string> aliases;
 
@@ -29,7 +32,7 @@ void updatePathVars() {
 
 int execCMD(string binPath) {
     vector<char*> args = { &binPath[0] };
-    for (auto& arg : currCommand.args) {
+    for (auto& arg : line.commands.at(0).args) {
         args.push_back(&arg[0]);
     }
     args.push_back(NULL);
@@ -51,11 +54,11 @@ int execCMD(string binPath) {
 
 void execHelper() {
     bool succ = false;
-    if (currCommand.command[0] == '/') {
-        if (execCMD(currCommand.command) == 0) succ = true;
+    if (line.commands.at(0).command[0] == '/') {
+        if (execCMD(line.commands.at(0).command) == 0) succ = true;
     } else {
         for (auto& path : pathVars) {
-            if (execCMD(path + '/' + currCommand.command) == 0) {
+            if (execCMD(path + '/' + line.commands.at(0).command) == 0) {
                 succ = true;
                 break;
             }
@@ -65,7 +68,9 @@ void execHelper() {
         cerr << "Invalid command\n";
 }
 
-void parseCMD() {
+void execSingleCMD() {
+    Line::CMD currCommand = line.commands.at(0);
+
     auto it = aliases.find(currCommand.command);
     if (it != aliases.end()) {
         string fullCommand = it->second;
@@ -79,9 +84,7 @@ void parseCMD() {
         while (ss >> arg) {
             currCommand.args.push_back(arg);
         }
-        parseCMD();
-        currCommand.command.clear();
-        currCommand.args.clear();
+        execSingleCMD();
         return;
     }
 
@@ -113,9 +116,61 @@ void parseCMD() {
     } else {
         execHelper();
     }
-    currCommand.command.clear();
-    currCommand.args.clear();
 }
+
+void execMultiCMD() {
+    vector<char*> args1 = { &line.commands.at(0).command[0] };
+    for (auto& arg : line.commands.at(0).args) {
+        args1.push_back(&arg[0]);
+    }
+    args1.push_back(NULL);
+
+    vector<char*> args2 = { &line.commands.at(1).command[0] };
+    for (auto& arg : line.commands.at(1).args) {
+        args2.push_back(&arg[0]);
+    }
+    args2.push_back(NULL);
+
+    pid_t pid;
+    int fd[2];
+
+    pipe(fd);
+    pid = fork();
+
+    if(pid==0) {
+        dup2(fd[WRITE_END], STDOUT_FILENO);
+        close(fd[READ_END]);
+        close(fd[WRITE_END]);
+        execvp(line.commands.at(0).command.c_str(), &args1[0]);
+        cerr << "Failed to execute" << endl;
+        exit(1);
+    } else { 
+        pid=fork();
+
+        if(pid==0) {
+            dup2(fd[READ_END], STDIN_FILENO);
+            close(fd[WRITE_END]);
+            close(fd[READ_END]);
+            execvp(line.commands.at(1).command.c_str(), &args2[0]);
+            cerr << "Failed to execute" << endl;
+            exit(1);
+        } else {
+            int status;
+            close(fd[READ_END]);
+            close(fd[WRITE_END]);
+            waitpid(pid, &status, 0);
+        }
+    }
+}
+
+void parseLine() {
+    if (line.commands.size() == 1) {
+        execSingleCMD();
+    } else {
+        execMultiCMD();
+    }
+    line.reset();
+} 
 
 string expandVars(string s) {
     if (s.find("~") != string::npos) {
@@ -157,11 +212,11 @@ int main() {
     updatePathVars();
 
     string username = pw->pw_name;
+    string currPath;
 
     while (true) {
-        char cwd[PATH_MAX];
-        getcwd(cwd, sizeof(cwd));
-        cout << username << ":" << cwd << "> " << flush;
+        currPath = filesystem::current_path();
+        cout << username << ":" << currPath << "> " << flush;
         yyparse();
     }
     return 0;

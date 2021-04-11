@@ -10,7 +10,9 @@ struct Line {
     };
 
     bool inputRedirect = false;
+    std::string input;
     bool outputRedirect = false;
+    std::string output;
     int i = -1;
     std::vector<CMD> commands;
 
@@ -30,6 +32,8 @@ struct Line {
         outputRedirect = false;
         i = -1;
         commands.clear();
+        input.clear();
+        output.clear();
     }
 };
 

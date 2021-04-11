@@ -41,7 +41,7 @@ exe: WORD       { line.addCommand(expandVars($1)); free($1); }
 args: WORD      { line.addArg(expandVars($1)); free($1); }
 | args WORD     { line.addArg(expandVars($2)); free($2); }
 
-redirect: '>' WORD  { line.outputRedirect = true; }
-| '<' WORD          { line.inputRedirect = true; }
+redirect: '>' WORD  { line.outputRedirect = true; line.output = $2; free($2); }
+| '<' WORD          { line.inputRedirect = true; line.input = $2; free($2); }
 
 %%

@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <sstream>
 #include <unistd.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <pwd.h>
 #include <sys/wait.h> 
@@ -42,6 +43,16 @@ int execCMD(string binPath) {
         cerr << "Fork failed" << endl;
         return -1; 
     } else if (p == 0) {
+        if (line.outputRedirect) {
+            int redirect = open(line.output.c_str(), O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
+            close(STDOUT_FILENO);
+            dup2(redirect, STDOUT_FILENO);
+        }
+        if (line.inputRedirect) {
+            int redirect = open(line.input.c_str(), O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR);
+            close(STDIN_FILENO);
+            dup2(redirect, STDIN_FILENO);
+        }
         execv(binPath.c_str(), &args[0]);
         exit(1);
     } else {
@@ -69,10 +80,20 @@ void maybeexecMultiCMD() {
 			cerr << "Fork failed" << endl;
 			exit(1);
 		} else if (pid == 0) {
-			dup2(fdd, READ_END);
+            if (line.inputRedirect && i == 0) {
+                int redirect = open(line.input.c_str(), O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR);
+                close(STDIN_FILENO);
+                dup2(redirect, STDIN_FILENO);
+            } else {
+			    dup2(fdd, STDIN_FILENO);
+            }
 			if (i < line.commands.size() - 1) {
 				dup2(fd[WRITE_END], STDOUT_FILENO);
-			}
+			} else if (line.outputRedirect && i == line.commands.size() - 1) {
+                int redirect = open(line.output.c_str(), O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
+                close(STDOUT_FILENO);
+                dup2(redirect, STDOUT_FILENO);
+            }
 			close(fd[READ_END]);
 			execvp(line.commands.at(i).command.c_str(), &args[0]);
 			exit(1);
@@ -82,51 +103,6 @@ void maybeexecMultiCMD() {
 			fdd = fd[READ_END];
 		}
 	}
-}
-
-void execMultiCMD() {
-    vector<char*> args1 = { &line.commands.at(0).command[0] };
-    for (auto& arg : line.commands.at(0).args) {
-        args1.push_back(&arg[0]);
-    }
-    args1.push_back(NULL);
-
-    vector<char*> args2 = { &line.commands.at(1).command[0] };
-    for (auto& arg : line.commands.at(1).args) {
-        args2.push_back(&arg[0]);
-    }
-    args2.push_back(NULL);
-
-    pid_t pid;
-    int fd[2];
-
-    pipe(fd);
-    pid = fork();
-
-    if(pid==0) {
-        dup2(fd[WRITE_END], STDOUT_FILENO);
-        close(fd[READ_END]);
-        close(fd[WRITE_END]);
-        execvp(line.commands.at(0).command.c_str(), &args1[0]);
-        cerr << "Failed to execute" << endl;
-        exit(1);
-    } else { 
-        pid=fork();
-
-        if(pid==0) {
-            dup2(fd[READ_END], STDIN_FILENO);
-            close(fd[WRITE_END]);
-            close(fd[READ_END]);
-            execvp(line.commands.at(1).command.c_str(), &args2[0]);
-            cerr << "Failed to execute" << endl;
-            exit(1);
-        } else {
-            int status;
-            close(fd[READ_END]);
-            close(fd[WRITE_END]);
-            waitpid(pid, &status, 0);
-        }
-    }
 }
 
 void execHelper() {

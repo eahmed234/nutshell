@@ -30,11 +30,11 @@ program: line       { YYACCEPT; }
 line: fullcmd STOP      { parseLine(); }
 | fullcmd redirect STOP { parseLine(); }
 
-fullcmd: cmd           { }
-| fullcmd '|' cmd      { }
+fullcmd: cmd      
+| fullcmd '|' cmd
 
-cmd: exe        { }
-| exe args      { }
+cmd: exe
+| exe args
 
 exe: WORD       { line.addCommand(expandVars($1)); free($1); }
 

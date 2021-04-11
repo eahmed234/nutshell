@@ -41,7 +41,10 @@ exe: WORD       { line.addCommand(expandVars($1)); free($1); }
 args: WORD      { line.addArg(expandVars($1)); free($1); }
 | args WORD     { line.addArg(expandVars($2)); free($2); }
 
-redirect: '>' WORD  { line.outputRedirect = true; line.output = $2; free($2); }
-| '<' WORD          { line.inputRedirect = true; line.input = $2; free($2); }
+redirect: '>' WORD      { line.outputRedirect = true; line.append = false; line.output = $2; free($2); }
+| '<' WORD              { line.inputRedirect = true; line.input = $2; free($2); }
+| '>''>' WORD           { line.outputRedirect = true; line.append = true; line.output = $3; free($3);}
+| '<' WORD '>' WORD     { line.inputRedirect = true; line.input = $2; line.outputRedirect = true; line.append = false; line.output = $4; free($2); free($4); }
+| '<' WORD '>''>' WORD  { line.inputRedirect = true; line.input = $2; line.outputRedirect = true; line.append = true; line.output = $5; free($2); free($5); }
 
 %%

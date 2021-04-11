@@ -1,6 +1,4 @@
 #include <iostream>
-#include <algorithm>
-#include <sstream>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/types.h>
@@ -44,7 +42,12 @@ int execCMD(string binPath) {
         return -1; 
     } else if (p == 0) {
         if (line.outputRedirect) {
-            int redirect = open(line.output.c_str(), O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
+            int redirect;
+            if (line.append) {
+                redirect = open(line.output.c_str(), O_CREAT | O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR);
+            } else {
+                redirect = open(line.output.c_str(), O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
+            }
             close(STDOUT_FILENO);
             dup2(redirect, STDOUT_FILENO);
         }
@@ -63,7 +66,7 @@ int execCMD(string binPath) {
     return 0;
 }
 
-void maybeexecMultiCMD() {
+void execMultiCMD() {
     int fd[2];
 	pid_t pid;
 	int fdd = 0;
@@ -90,7 +93,12 @@ void maybeexecMultiCMD() {
 			if (i < line.commands.size() - 1) {
 				dup2(fd[WRITE_END], STDOUT_FILENO);
 			} else if (line.outputRedirect && i == line.commands.size() - 1) {
-                int redirect = open(line.output.c_str(), O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
+                int redirect;
+                if (line.append) {
+                    redirect = open(line.output.c_str(), O_CREAT | O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR);
+                } else {
+                    redirect = open(line.output.c_str(), O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
+                }
                 close(STDOUT_FILENO);
                 dup2(redirect, STDOUT_FILENO);
             }
@@ -107,7 +115,7 @@ void maybeexecMultiCMD() {
 
 void execHelper() {
     if (line.commands.size() > 1) {
-        maybeexecMultiCMD();
+        execMultiCMD();
         return;
     }
     bool succ = false;
@@ -128,23 +136,6 @@ void execHelper() {
 
 void parseLine() {
     Line::CMD currCommand = line.commands.at(0);
-
-    auto it = aliases.find(currCommand.command);
-    if (it != aliases.end()) {
-        string fullCommand = it->second;
-        fullCommand.erase(remove(fullCommand.begin(), fullCommand.end(), '\"'), fullCommand.end());
-        stringstream ss(fullCommand);
-        string command;
-        ss >> command;
-        currCommand.command = command;
-        currCommand.args.clear();
-        string arg;
-        while (ss >> arg) {
-            currCommand.args.push_back(arg);
-        }
-        parseLine();
-        return;
-    }
 
     if (currCommand.command == "alias") {
         if (currCommand.args.empty()) {

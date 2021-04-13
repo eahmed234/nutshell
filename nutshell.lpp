@@ -8,6 +8,8 @@
 %%
 
 "bye"               { return EXIT; }
+2\>\&1              { return STDERRtoSTDOUT; }
+2\>                 { return STDERRtoFILE; }
 [\<\>\|]            { return yytext[0]; }    
 \"(\\.|[^"\\])*\"   { yylval.str = strdup(yytext); return WORD; }
 [^ &<>\|\\\"\n\t]+  { yylval.str = strdup(yytext); return WORD; }

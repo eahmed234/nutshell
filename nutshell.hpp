@@ -23,11 +23,17 @@ struct Line {
         std::vector<std::string> args;
     };
 
+    bool stderrRedirect = false;
+    bool stderrToFile;
+    std::string stderrRedirectFile;
+
     bool inputRedirect = false;
     std::string input;
+
     bool outputRedirect = false;
     bool append;
     std::string output;
+
     int i = -1;
     std::vector<CMD> commands;
 
@@ -62,9 +68,11 @@ struct Line {
     void reset() {
         inputRedirect = false;
         outputRedirect = false;
+        stderrRedirect = false;
         i = -1;
         commands.clear();
         input.clear();
         output.clear();
+        stderrRedirectFile.clear();
     }
 };

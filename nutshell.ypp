@@ -20,15 +20,17 @@
 };
 
 %token <str> WORD
-%token STOP EXIT
+%token STOP EXIT STDERRtoSTDOUT STDERRtoFILE
 
 %%
 
 program: line       { YYACCEPT; }
 | EXIT              { cout << "Goodbye!\n"; exit(0); }
 
-line: fullcmd STOP      { parseLine(); }
-| fullcmd redirect STOP { parseLine(); }
+line: fullcmd STOP              { parseLine(); }
+| fullcmd redirect STOP         { parseLine(); }
+| fullcmd stderr STOP           { parseLine(); }
+| fullcmd redirect stderr STOP  { parseLine(); }
 
 fullcmd: cmd      
 | fullcmd '|' cmd
@@ -41,10 +43,13 @@ exe: WORD       { line.addCommand(expandVars($1)); free($1); }
 args: WORD      { line.addArg(expandVars($1)); free($1); }
 | args WORD     { line.addArg(expandVars($2)); free($2); }
 
-redirect: '>' WORD      { line.outputRedirect = true; line.append = false; line.output = $2; free($2); }
-| '<' WORD              { line.inputRedirect = true; line.input = $2; free($2); }
-| '>''>' WORD           { line.outputRedirect = true; line.append = true; line.output = $3; free($3);}
-| '<' WORD '>' WORD     { line.inputRedirect = true; line.input = $2; line.outputRedirect = true; line.append = false; line.output = $4; free($2); free($4); }
-| '<' WORD '>''>' WORD  { line.inputRedirect = true; line.input = $2; line.outputRedirect = true; line.append = true; line.output = $5; free($2); free($5); }
+redirect: '>' WORD      { line.outputRedirect = true; line.append = false; line.output = expandVars($2); free($2); }
+| '<' WORD              { line.inputRedirect = true; line.input = expandVars($2); free($2); }
+| '>''>' WORD           { line.outputRedirect = true; line.append = true; line.output = expandVars($3); free($3);}
+| '<' WORD '>' WORD     { line.inputRedirect = true; line.input = $2; line.outputRedirect = true; line.append = false; line.output = expandVars($4); free($2); free($4); }
+| '<' WORD '>''>' WORD  { line.inputRedirect = true; line.input = $2; line.outputRedirect = true; line.append = true; line.output = expandVars($5); free($2); free($5); }
+
+stderr: STDERRtoSTDOUT  { line.stderrRedirect = true; line.stderrToFile = false; }
+| STDERRtoFILE WORD     { line.stderrRedirect = true; line.stderrToFile = true; line.stderrRedirectFile = expandVars($2); free($2); }
 
 %%

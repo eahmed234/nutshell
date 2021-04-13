@@ -70,8 +70,33 @@ void execMultiCMD() {
     int fd[2];
 	pid_t pid;
 	int fdd = 0;
+    string binPath;
 
 	for (size_t i = 0; i < line.commands.size(); ++i) {
+        if (line.commands.at(i).command.at(0) == '/') {
+            struct stat sb;
+            if (stat(line.commands.at(i).command.c_str(), &sb) == 0 && sb.st_mode & S_IXUSR) {
+                binPath = line.commands.at(i).command;
+            } else {
+                cerr << "Invalid Command" << endl;
+                return;
+            }
+        } else {
+            bool succ = false;
+            for (auto& path : pathVars) {
+                binPath = path + '/' + line.commands.at(i).command;
+                struct stat sb;
+                if (stat(binPath.c_str(), &sb) == 0 && sb.st_mode & S_IXUSR) {
+                    succ = true;
+                    break;
+                }
+            }
+            if (!succ) {
+                cerr << "Invalid Command" << endl;
+                return; 
+            }
+        }
+
         vector<char*> args = { &line.commands.at(i).command[0] };
         for (auto& arg : line.commands.at(i).args) {
             args.push_back(&arg[0]);
@@ -103,7 +128,7 @@ void execMultiCMD() {
                 dup2(redirect, STDOUT_FILENO);
             }
 			close(fd[READ_END]);
-			execvp(line.commands.at(i).command.c_str(), &args[0]);
+			execv(binPath.c_str(), &args[0]);
 			exit(1);
 		} else {
 			wait(NULL);

@@ -1,6 +1,35 @@
 %{
     #include <string.h>
     #include "nutshell.tab.hpp"
+
+    string expandVars(string s) {
+        if (s.find("~") != string::npos) {
+            size_t pos = 0;
+            while ((pos = s.find("~", pos)) != string::npos) {
+                s.replace(pos, 1, envs["HOME"]);
+                pos += envs["HOME"].length();
+            }
+        }
+
+        if( s.find( "${" ) == string::npos ) return s;
+
+        string pre  = s.substr( 0, s.find( "${" ) );
+        string post = s.substr( s.find( "${" ) + 2 );
+
+        if( post.find( '}' ) == string::npos ) return s;
+
+        string variable = post.substr( 0, post.find( '}' ) );
+        string value = envs[variable];
+
+        post = post.substr( post.find( '}' ) + 1 );
+
+        return expandVars( pre + value + post );
+    }
+
+    char* expand (char* s) {
+        return strdup(expandVars(s).data());
+    }
+
 %}
 
 %option noyywrap
@@ -12,10 +41,10 @@
 2\>                 { return STDERRtoFILE; }
 [\<\>\|]            { return yytext[0]; }    
 \"(\\.|[^"\\])*\"   { yylval.str = strdup(yytext); return WORD; }
-[^ &<>\|\\\"\n\t]+  { yylval.str = strdup(yytext); return WORD; }
+[^ &<>\|\\\"\n\t]+  { yylval.str = expand(yytext); return WORD; }
 [\n]                { return STOP; }
 <<EOF>>             { return 0; }
 [ \t]+              { }
-.                   { cout << "Unrecognized token starting with " << yytext[0] << endl; }
+.                   { cerr << "Unrecognized token starting with " << yytext[0] << endl; }
 
 %%

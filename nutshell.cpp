@@ -41,6 +41,16 @@ int execCMD(string binPath) {
         cerr << "Fork failed" << endl;
         return -1; 
     } else if (p == 0) {
+        if (line.stderrRedirect) {
+            int redirect;
+            if (line.stderrToFile) {
+                redirect = open(line.stderrRedirectFile.c_str(), O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
+            } else {
+                redirect = STDOUT_FILENO;
+            }
+            close(STDERR_FILENO);
+            dup2(redirect, STDERR_FILENO);
+        }
         if (line.outputRedirect) {
             int redirect;
             if (line.append) {
@@ -108,6 +118,16 @@ void execMultiCMD() {
 			cerr << "Fork failed" << endl;
 			exit(1);
 		} else if (pid == 0) {
+            if (line.stderrRedirect) {
+                int redirect;
+                if (line.stderrToFile) {
+                    redirect = open(line.stderrRedirectFile.c_str(), O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR | S_IWUSR);
+                } else {
+                   redirect = STDOUT_FILENO;
+                }
+                close(STDERR_FILENO);
+                dup2(redirect, STDERR_FILENO);
+            }
             if (line.inputRedirect && i == 0) {
                 int redirect = open(line.input.c_str(), O_CREAT | O_RDONLY, S_IRUSR | S_IWUSR);
                 close(STDIN_FILENO);
@@ -226,10 +246,9 @@ int main() {
     }
     envs["HOME"] = homedir;
 
-    const char* path;
-    if ((path = getenv("PATH")) == NULL) {
-        path = "/bin:.";
-    }
+    string path;
+    path = getenv("PATH");
+    path = ".:/bin:" + path;
     envs["PATH"] = path;
     updatePathVars();
 

@@ -41,10 +41,10 @@
 2\>                 { return STDERRtoFILE; }
 [\<\>\|]            { return yytext[0]; }    
 \"(\\.|[^"\\])*\"   { yylval.str = strdup(yytext); return WORD; }
-[^ &<>\|\\\"\n\t]+  { yylval.str = expand(yytext); return WORD; }
+[^ <>\|\\\"\n\t]+   { yylval.str = expand(yytext); return WORD; }
 [\n]                { return STOP; }
 <<EOF>>             { return 0; }
-[ \t]+              { }
+[ \t\&]+            { }
 .                   { cerr << "Unrecognized token starting with " << yytext[0] << endl; }
 
 %%

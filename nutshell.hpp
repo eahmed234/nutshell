@@ -49,7 +49,7 @@ struct Line {
             while (ss >> arg) {
                 addArg(arg);
             }
-            return command;
+            return expandAlias(command);
         }
         return s;
     }

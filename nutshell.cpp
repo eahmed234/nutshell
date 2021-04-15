@@ -215,6 +215,8 @@ void parseLine() {
 } 
 
 int main() {
+    ios_base::sync_with_stdio(false);
+    
     auto pw = getpwuid(getuid());
     const char* homedir;
     if ((homedir = getenv("HOME")) == NULL) {
